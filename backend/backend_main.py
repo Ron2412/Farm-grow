@@ -8,7 +8,7 @@ from services.ml_service import MLService
 from models.farmer_models import SoilData
 
 # Import routes
-from routes import weather_routes, soil_routes, ml_routes, alert_routes
+from routes import weather_routes, soil_routes, ml_routes, alert_routes, market_routes
 # Later: market_routes, voice_routes, pest_routes, farmer_routes
 
 # Initialize ML service
@@ -57,7 +57,8 @@ async def root():
 app.include_router(weather_routes.router)
 app.include_router(soil_routes.router)
 app.include_router(ml_routes.router)
-app.include_router(alert_routes.router)  # ✅ NEW
+app.include_router(alert_routes.router)
+app.include_router(market_routes.router)
 
 # -----------------------------
 # ML direct test route (optional)
