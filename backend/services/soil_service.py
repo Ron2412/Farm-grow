@@ -1,6 +1,6 @@
 # services/soil_service.py
 import logging
-from typing import Dict, List, Any, Tuple
+from typing import Dict, List, Any
 from models.farmer_models import SoilData, CropRecommendation, CropRecommendationResponse
 
 logger = logging.getLogger(__name__)
@@ -8,6 +8,7 @@ logger = logging.getLogger(__name__)
 class SoilService:
     def __init__(self):
         self.crop_database = self._initialize_crop_database()
+        self.seasonal_crops = self._initialize_seasonal_crops()
 
     def _initialize_crop_database(self) -> Dict[str, Any]:
         """Initialize a simple crop suitability database"""
@@ -31,8 +32,26 @@ class SoilService:
                 "temperature_range": (20, 30),
                 "water_requirement": "high",
                 "yield_potential": 6000,
+            },
+            "maize": {
+                "ph_range": (5.5, 7.5),
+                "nitrogen_req": (50, 100),
+                "phosphorus_req": (25, 50),
+                "potassium_req": (30, 70),
+                "soil_types": ["loamy", "sandy loam"],
+                "temperature_range": (18, 27),
+                "water_requirement": "medium",
+                "yield_potential": 4000,
+            },
+        }
+
+    def _initialize_seasonal_crops(self) -> Dict[str, Dict[str, List[str]]]:
+        """Season-based crop recommendations for Punjab (Ludhiana focus)."""
+        return {
+            "ludhiana": {
+                "rabi": ["wheat", "mustard", "barley", "gram"],
+                "kharif": ["rice", "maize", "cotton", "sorghum"],
             }
-            # ➕ You can add more crops here...
         }
 
     def _normalize_input(self, soil_data: SoilData) -> Dict[str, Any]:
@@ -114,3 +133,42 @@ class SoilService:
         if 6 <= soil["ph"] <= 7.5 and soil["nitrogen"] > 50:
             return "Good"
         return "Needs Improvement"
+
+    async def get_seasonal_recommendations(self, season: str, region: str) -> Dict[str, Any]:
+        """
+        Recommend crops based on season and region (simplified farmer-friendly).
+        """
+        try:
+            region = region.lower()
+            season = season.lower()
+
+            if region not in self.seasonal_crops:
+                raise ValueError(f"No seasonal data available for {region}")
+
+            if season not in self.seasonal_crops[region]:
+                raise ValueError(f"No data for season '{season}' in {region}")
+
+            crops = self.seasonal_crops[region][season]
+
+            recommendations = []
+            for crop in crops:
+                if crop in self.crop_database:
+                    info = self.crop_database[crop]
+                    recommendations.append({
+                        "crop_name": crop,
+                        "ideal_ph": info["ph_range"],
+                        "water_requirement": info["water_requirement"],
+                        "yield_potential": info["yield_potential"],
+                        "suitability_reason": f"Traditionally grown in {region.title()} during {season.title()} season."
+                    })
+                else:
+                    recommendations.append({"crop_name": crop, "note": "Basic seasonal crop"})
+
+            return {
+                "region": region,
+                "season": season,
+                "recommended_crops": recommendations
+            }
+        except Exception as e:
+            logger.error(f"Error in seasonal recommendations: {e}")
+            raise Exception(f"Failed to fetch seasonal recommendations: {e}")
