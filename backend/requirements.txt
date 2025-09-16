@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+firebase-admin
+python-multipart
+requests
+scikit-learn
+joblib
+prophet
+google-cloud-dialogflow
+google-cloud-speech
+google-cloud-texttospeech
