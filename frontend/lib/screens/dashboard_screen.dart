@@ -21,14 +21,14 @@ class _DashboardScreenState extends State<DashboardScreen>
   late AnimationController _slideController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
+  
+  // For AI Chat
+  final TextEditingController _chatController = TextEditingController();
+  final List<Map<String, dynamic>> _chatMessages = [];
+  bool _isSendingMessage = false;
 
-  // Quick stats
-  final Map<String, dynamic> _quickStats = {
-    'total_yield': '4.5 tons',
-    'revenue': '₹1,25,000',
-    'active_crops': 3,
-    'weather_alert': false,
-  };
+  // Dashboard settings
+  bool _isTranslationEnabled = false;
 
   @override
   void initState() {
@@ -68,6 +68,7 @@ class _DashboardScreenState extends State<DashboardScreen>
   void dispose() {
     _fadeController.dispose();
     _slideController.dispose();
+    _chatController.dispose();
     super.dispose();
   }
 
@@ -302,82 +303,76 @@ class _DashboardScreenState extends State<DashboardScreen>
     return Container(
       height: 100,
       margin: const EdgeInsets.symmetric(horizontal: 20),
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: [
-          _buildStatCard(
-            'Total Yield',
-            _quickStats['total_yield'],
-            Icons.grass,
-            AppTheme.success,
-          ),
-          _buildStatCard(
-            'Revenue',
-            _quickStats['revenue'],
-            Icons.attach_money,
-            AppTheme.primaryGreen,
-          ),
-          _buildStatCard(
-            'Active Crops',
-            _quickStats['active_crops'].toString(),
-            Icons.eco,
-            AppTheme.accentOrange,
-          ),
-        ],
-      ),
+      child: _buildTranslationCard(),
     );
   }
-
-  Widget _buildStatCard(String title, String value, IconData icon, Color color) {
+  
+  Widget _buildTranslationCard() {
     return Container(
-      width: 140,
-      margin: const EdgeInsets.only(right: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [color, color.withOpacity(0.7)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.3),
-            blurRadius: 8,
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
       ),
-      padding: const EdgeInsets.all(12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Row(
         children: [
-          Icon(icon, color: Colors.white, size: 22),
-          const SizedBox(height: 4),
-          FittedBox(
-            fit: BoxFit.scaleDown,
+          Icon(Icons.translate, color: AppTheme.primaryGreen, size: 28),
+          const SizedBox(width: 12),
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  value,
+                  _isTranslationEnabled ? 'Translation Enabled' : 'Enable Translation',
                   style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
                     fontWeight: FontWeight.bold,
+                    fontSize: 16,
                   ),
                 ),
+                const SizedBox(height: 4),
                 Text(
-                  title,
+                  'Make app accessible in your language',
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.9),
-                    fontSize: 11,
+                    color: Colors.grey[600],
+                    fontSize: 12,
                   ),
                 ),
               ],
             ),
           ),
+          Switch(
+            value: _isTranslationEnabled,
+            activeColor: AppTheme.primaryGreen,
+            onChanged: (value) {
+              setState(() {
+                _isTranslationEnabled = value;
+                _applyTranslation(value);
+              });
+            },
+          ),
         ],
+      ),
+    );
+  }
+  
+  void _applyTranslation(bool enabled) {
+    // This would connect to a translation service in a real implementation
+    // For now, we'll just show a snackbar to indicate the change
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(enabled 
+          ? 'Translation enabled - App language changed' 
+          : 'Translation disabled - Using default language'),
+        backgroundColor: AppTheme.primaryGreen,
+        duration: const Duration(seconds: 2),
       ),
     );
   }
@@ -523,10 +518,10 @@ class _DashboardScreenState extends State<DashboardScreen>
             crossAxisSpacing: 12,
             children: [
               _buildActionCard(
-                'Add Crop',
-                Icons.add_circle_outline,
+                'AI Chat',
+                Icons.chat_outlined,
                 AppTheme.primaryGreen,
-                () {},
+                () => _showChatDialog(context),
               ),
               _buildActionCard(
                 'Soil Test',
@@ -541,10 +536,10 @@ class _DashboardScreenState extends State<DashboardScreen>
                 () => Navigator.pushNamed(context, '/market'),
               ),
               _buildActionCard(
-                'Weather',
-                Icons.wb_sunny,
+                'Pest Detector',
+                Icons.camera_alt_outlined,
                 AppTheme.warning,
-                () => Navigator.pushNamed(context, '/weather'),
+                () => _showImageDetector(),
               ),
               _buildActionCard(
                 'Alerts',
@@ -563,6 +558,358 @@ class _DashboardScreenState extends State<DashboardScreen>
         ],
       ),
     );
+  }
+
+  // Chat dialog implementation
+  void _showChatDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          return Dialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.9,
+              height: MediaQuery.of(context).size.height * 0.7,
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'AI Farming Assistant',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
+                  ),
+                  const Divider(),
+                  Expanded(
+                    child: _chatMessages.isEmpty
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.chat_bubble_outline,
+                                  size: 64,
+                                  color: AppTheme.primaryGreen.withOpacity(0.5),
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'Ask me anything about farming!',
+                                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    color: AppTheme.textSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : ListView.builder(
+                            itemCount: _chatMessages.length,
+                            itemBuilder: (context, index) {
+                              final message = _chatMessages[index];
+                              return _buildChatMessage(
+                                message['text'],
+                                message['isUser'],
+                                message['timestamp'],
+                              );
+                            },
+                          ),
+                  ),
+                  const Divider(),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _chatController,
+                          decoration: InputDecoration(
+                            hintText: 'Type your question...',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide.none,
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey[100],
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 10,
+                            ),
+                          ),
+                          onSubmitted: (_) => _sendChatMessage(setState),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryGreen,
+                          shape: BoxShape.circle,
+                        ),
+                        child: IconButton(
+                          icon: _isSendingMessage
+                              ? const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Icon(Icons.send, color: Colors.white),
+                          onPressed: _isSendingMessage ? null : () => _sendChatMessage(setState),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildChatMessage(String text, bool isUser, DateTime timestamp) {
+    return Align(
+      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: isUser ? AppTheme.primaryGreen : Colors.grey[200],
+          borderRadius: BorderRadius.circular(20),
+        ),
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * 0.7,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              text,
+              style: TextStyle(
+                color: isUser ? Colors.white : AppTheme.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              '${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')}',
+              style: TextStyle(
+                fontSize: 10,
+                color: isUser ? Colors.white70 : Colors.grey,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _sendChatMessage(StateSetter setState) {
+    if (_chatController.text.trim().isEmpty) return;
+
+    final userMessage = _chatController.text.trim();
+    setState(() {
+      _chatMessages.add({
+        'text': userMessage,
+        'isUser': true,
+        'timestamp': DateTime.now(),
+      });
+      _isSendingMessage = true;
+      _chatController.clear();
+    });
+
+    // Simulate AI response after a delay
+    Future.delayed(const Duration(seconds: 1), () {
+      setState(() {
+        _chatMessages.add({
+          'text': _getAIResponse(userMessage),
+          'isUser': false,
+          'timestamp': DateTime.now(),
+        });
+        _isSendingMessage = false;
+      });
+    });
+  }
+
+  String _getAIResponse(String userMessage) {
+    // Mock AI responses based on keywords in user message
+    final lowerCaseMessage = userMessage.toLowerCase();
+    
+    if (lowerCaseMessage.contains('weather')) {
+      return 'Based on the current forecast, expect ${_weatherData?['weather_condition'] ?? 'clear skies'} with temperatures around ${_weatherData?['temperature'] ?? '25'}°C. This is good weather for field work.';
+    } else if (lowerCaseMessage.contains('crop') || lowerCaseMessage.contains('plant')) {
+      return 'For your soil type and current season, I recommend planting wheat, rice, or maize. Would you like specific details about any of these crops?';
+    } else if (lowerCaseMessage.contains('pest') || lowerCaseMessage.contains('disease')) {
+      return 'To identify pests or diseases, please use the image detector feature on the dashboard. You can upload a photo of the affected plant, and I\'ll analyze it for you.';
+    } else if (lowerCaseMessage.contains('market') || lowerCaseMessage.contains('price')) {
+      return 'Current market prices: Wheat - ₹${_marketData?['wheat_price'] ?? '2100'}/quintal, Rice - ₹${_marketData?['rice_price'] ?? '3200'}/quintal. Prices have ${_marketData?['trend'] == 'up' ? 'increased' : 'decreased'} by ${_marketData?['change'] ?? '2.5'}% this week.';
+    } else if (lowerCaseMessage.contains('fertilizer') || lowerCaseMessage.contains('nutrient')) {
+      return 'Based on typical soil conditions in your area, I recommend using a balanced NPK fertilizer (10-10-10) at 250kg/hectare. For more specific recommendations, please use the soil testing feature.';
+    } else {
+      return 'I\'m your farming assistant. I can help with weather forecasts, crop recommendations, pest identification, market prices, and more. What specific information do you need?';
+    }
+  }
+
+  // Image detector section
+  void _showImageDetector() {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.9,
+          height: MediaQuery.of(context).size.height * 0.7,
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Pest & Disease Detector',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              const Divider(),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.camera_alt_outlined,
+                      size: 80,
+                      color: AppTheme.primaryGreen.withOpacity(0.5),
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      'Take a photo of your plant to identify pests and diseases',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: AppTheme.textSecondary,
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    ElevatedButton.icon(
+                      onPressed: () => _mockImageDetection(context),
+                      icon: const Icon(Icons.camera_alt),
+                      label: const Text('Take Photo'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primaryGreen,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextButton.icon(
+                      onPressed: () => _mockImageDetection(context),
+                      icon: const Icon(Icons.photo_library),
+                      label: const Text('Choose from Gallery'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _mockImageDetection(BuildContext context) {
+    // Close the current dialog
+    Navigator.pop(context);
+    
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Dialog(
+        child: Padding(
+          padding: EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 16),
+              Text('Analyzing image...'),
+            ],
+          ),
+        ),
+      ),
+    );
+    
+    // Simulate processing delay
+    Future.delayed(const Duration(seconds: 2), () {
+      // Close loading dialog
+      Navigator.pop(context);
+      
+      // Show results dialog
+      showDialog(
+        context: context,
+        builder: (context) => Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.9,
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.bug_report,
+                  size: 48,
+                  color: AppTheme.danger,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Pest Detected: Aphids',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Aphids are small sap-sucking insects that can cause significant damage to crops by transmitting plant viruses.',
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                const Divider(),
+                const SizedBox(height: 16),
+                Text(
+                  'Recommended Action:',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  '1. Apply neem oil spray (15ml per liter of water)\n'
+                  '2. Introduce ladybugs as natural predators\n'
+                  '3. Remove heavily infested plant parts\n'
+                  '4. Apply insecticidal soap for severe infestations',
+                  textAlign: TextAlign.left,
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Got it'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryGreen,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    });
   }
 
   Widget _buildActionCard(

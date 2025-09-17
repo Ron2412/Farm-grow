@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../api/api_client.dart';
+
 class AlertsScreen extends StatefulWidget {
   const AlertsScreen({Key? key}) : super(key: key);
 
@@ -109,29 +110,55 @@ class _AlertsScreenState extends State<AlertsScreen> {
   
   // Mock data for testing
   Map<String, dynamic> _getMockAlertData() {
+    // Use a Set to track unique alert titles and prevent duplicates
+    final Set<String> uniqueAlertTitles = {};
+    
+    // Create initial alerts list
+    final weatherAlerts = [
+      {
+        'title': 'Heavy Rainfall Expected',
+        'description': 'Heavy rainfall expected in next 24 hours. Protect your crops and ensure proper drainage.',
+        'severity': 'high',
+        'hours_ago': 2,
+      },
+      {
+        'title': 'Temperature Drop',
+        'description': 'Temperature expected to drop below 10°C tonight. Take precautions for sensitive crops.',
+        'severity': 'medium',
+        'hours_ago': 24,
+      },
+    ];
+    
+    // Filter out any duplicate weather alerts
+    final uniqueWeatherAlerts = weatherAlerts.where((alert) {
+      final title = alert['title'] as String;
+      if (uniqueAlertTitles.contains(title)) {
+        return false;
+      }
+      uniqueAlertTitles.add(title);
+      return true;
+    }).toList();
+    
+    // Add soil alerts, also checking for duplicates
+    final soilAlerts = [
+      {
+        'title': 'Soil Moisture Alert',
+        'description': 'Soil moisture levels are optimal for sowing. Consider planting wheat or mustard.',
+        'severity': 'info',
+        'days_ago': 0,
+      },
+    ].where((alert) {
+      final title = alert['title'] as String;
+      if (uniqueAlertTitles.contains(title)) {
+        return false;
+      }
+      uniqueAlertTitles.add(title);
+      return true;
+    }).toList();
+    
     return {
-      'weather_alerts': [
-        {
-          'title': 'Heavy Rainfall Expected',
-          'description': 'Heavy rainfall expected in next 24 hours. Protect your crops and ensure proper drainage.',
-          'severity': 'high',
-          'hours_ago': 2,
-        },
-        {
-          'title': 'Temperature Drop',
-          'description': 'Temperature expected to drop below 10°C tonight. Take precautions for sensitive crops.',
-          'severity': 'medium',
-          'hours_ago': 24,
-        },
-      ],
-      'soil_alerts': [
-        {
-          'title': 'Soil Moisture Alert',
-          'description': 'Soil moisture levels are optimal for sowing. Consider planting wheat or mustard.',
-          'severity': 'info',
-          'days_ago': 0,
-        },
-      ],
+      'weather_alerts': uniqueWeatherAlerts,
+      'soil_alerts': soilAlerts,
     };
   }
   
