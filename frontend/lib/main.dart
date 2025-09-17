@@ -5,6 +5,8 @@ import 'screens/dashboard_screen.dart';
 import 'screens/soil_screen.dart';
 import 'screens/market_screen.dart';
 import 'screens/alerts_screen.dart';
+import 'screens/pest_detection_screen.dart';
+import 'screens/chatbot_screen.dart';
 import 'theme/app_theme.dart';
 
 void main() {
@@ -34,6 +36,8 @@ class MyApp extends StatelessWidget {
         '/soil': (_) => const SoilScreen(),
         '/market': (_) => const MarketScreen(),
         '/alerts': (_) => const AlertsScreen(),
+        '/pest-detection': (_) => const PestDetectionScreen(),
+        '/chatbot': (_) => const ChatbotScreen(),
       },
     );
   }

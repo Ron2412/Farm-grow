@@ -53,6 +53,7 @@ backend/models/*.joblib
 
 # Build outputs
 build/
+**/build/
 ios/Flutter/Flutter.framework
 ios/Flutter/Flutter.podspec
 ios/Flutter/Generated.xcconfig
@@ -61,18 +62,28 @@ ios/ServiceDefinitions.json
 macos/Flutter/ephemeral/
 linux/flutter/ephemeral/
 windows/flutter/ephemeral/
+**/GeneratedPluginRegistrant.*
 
 # IDE
 .idea/
 .vscode/
 *.iml
+*.code-workspace
 
 # OS files
 *.swp
 *.swo
 *.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
 # Web build
 web/.dart_tool/
 web/.firebase/
+**/firebase-debug.log
+**/.firebase/
+**/.firebaserc

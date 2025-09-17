@@ -536,10 +536,10 @@ class _DashboardScreenState extends State<DashboardScreen>
                 () => Navigator.pushNamed(context, '/market'),
               ),
               _buildActionCard(
-                'Pest Detector',
+                'Pest Detection',
                 Icons.camera_alt_outlined,
                 AppTheme.warning,
-                () => _showImageDetector(),
+                () => Navigator.pushNamed(context, '/pest-detection'),
               ),
               _buildActionCard(
                 'Alerts',
@@ -548,10 +548,10 @@ class _DashboardScreenState extends State<DashboardScreen>
                 () => Navigator.pushNamed(context, '/alerts'),
               ),
               _buildActionCard(
-                'Help',
+                'Chatbot',
                 Icons.help_outline,
                 AppTheme.secondaryGreen,
-                () {},
+                () => Navigator.pushNamed(context, '/chatbot'),
               ),
             ],
           ),
