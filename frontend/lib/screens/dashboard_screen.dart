@@ -28,7 +28,8 @@ class _DashboardScreenState extends State<DashboardScreen>
   bool _isSendingMessage = false;
 
   // Dashboard settings
-  bool _isTranslationEnabled = false;
+  String _selectedLanguage = 'English';
+  final List<String> _availableLanguages = ['English', 'Hindi', 'Punjabi', 'Bengali', 'Tamil'];
 
   @override
   void initState() {
@@ -331,7 +332,7 @@ class _DashboardScreenState extends State<DashboardScreen>
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  _isTranslationEnabled ? 'Translation Enabled' : 'Enable Translation',
+                  'App Language',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -339,7 +340,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Make app accessible in your language',
+                  'Currently set to: $_selectedLanguage',
                   style: TextStyle(
                     color: Colors.grey[600],
                     fontSize: 12,
@@ -348,29 +349,47 @@ class _DashboardScreenState extends State<DashboardScreen>
               ],
             ),
           ),
-          Switch(
-            value: _isTranslationEnabled,
-            activeColor: AppTheme.primaryGreen,
-            onChanged: (value) {
-              setState(() {
-                _isTranslationEnabled = value;
-                _applyTranslation(value);
-              });
-            },
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: DropdownButton<String>(
+              value: _selectedLanguage,
+              icon: const Icon(Icons.arrow_drop_down),
+              iconSize: 24,
+              elevation: 16,
+              style: TextStyle(color: AppTheme.textPrimary),
+              underline: Container(height: 0),
+              onChanged: (String? newValue) {
+                if (newValue != null) {
+                  setState(() {
+                    _selectedLanguage = newValue;
+                    _applyLanguage(newValue);
+                  });
+                }
+              },
+              items: _availableLanguages
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
           ),
         ],
       ),
     );
   }
   
-  void _applyTranslation(bool enabled) {
+  void _applyLanguage(String language) {
     // This would connect to a translation service in a real implementation
     // For now, we'll just show a snackbar to indicate the change
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(enabled 
-          ? 'Translation enabled - App language changed' 
-          : 'Translation disabled - Using default language'),
+        content: Text('Language changed to $language'),
         backgroundColor: AppTheme.primaryGreen,
         duration: const Duration(seconds: 2),
       ),
