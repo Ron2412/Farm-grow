@@ -518,10 +518,10 @@ class _DashboardScreenState extends State<DashboardScreen>
             crossAxisSpacing: 12,
             children: [
               _buildActionCard(
-                'AI Chat',
+                'Chatbot',
                 Icons.chat_outlined,
                 AppTheme.primaryGreen,
-                () => _showChatDialog(context),
+                () => Navigator.pushNamed(context, '/chatbot'),
               ),
               _buildActionCard(
                 'Soil Test',
@@ -548,10 +548,10 @@ class _DashboardScreenState extends State<DashboardScreen>
                 () => Navigator.pushNamed(context, '/alerts'),
               ),
               _buildActionCard(
-                'Chatbot',
+                'Help',
                 Icons.help_outline,
                 AppTheme.secondaryGreen,
-                () => Navigator.pushNamed(context, '/chatbot'),
+                () => _showHelpDialog(context),
               ),
             ],
           ),
@@ -674,6 +674,103 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
+  // Help dialog implementation
+  void _showHelpDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.9,
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Government Helplines',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              const Divider(),
+              _buildHelplineItem(
+                'Kisan Call Center',
+                '1800-180-1551',
+                'For agricultural advice and information',
+                Icons.phone_in_talk,
+              ),
+              _buildHelplineItem(
+                'PM Kisan Helpline',
+                '011-24300606',
+                'For PM-KISAN scheme related queries',
+                Icons.agriculture,
+              ),
+              _buildHelplineItem(
+                'Soil Health Card',
+                '1800-180-1551',
+                'For soil health related information',
+                Icons.landscape,
+              ),
+              _buildHelplineItem(
+                'Crop Insurance',
+                '1800-180-1551',
+                'For crop insurance scheme information',
+                Icons.security,
+              ),
+              _buildHelplineItem(
+                'Agricultural Marketing',
+                '1800-270-0323',
+                'For agricultural marketing information',
+                Icons.store,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.primaryGreen,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                ),
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Close'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHelplineItem(String title, String number, String description, IconData icon) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: AppTheme.primaryGreen.withOpacity(0.2),
+          child: Icon(icon, color: AppTheme.primaryGreen),
+        ),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(description),
+        trailing: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppTheme.primaryGreen,
+            foregroundColor: Colors.white,
+          ),
+          onPressed: () {},
+          child: Text(number),
+        ),
+      ),
+    );
+  }
   Widget _buildChatMessage(String text, bool isUser, DateTime timestamp) {
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,

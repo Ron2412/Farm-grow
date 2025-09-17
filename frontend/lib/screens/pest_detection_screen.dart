@@ -87,7 +87,7 @@ class _PestDetectionScreenState extends State<PestDetectionScreen>
     await Future.delayed(const Duration(seconds: 2));
 
     try {
-      // Mock API call
+      // Mock API call with timeout handling
       final response = await http.post(
         Uri.parse('http://localhost:8000/pest/detect'),
         headers: {'Content-Type': 'application/json'},
@@ -95,7 +95,9 @@ class _PestDetectionScreenState extends State<PestDetectionScreen>
           'crop_type': _selectedCrop,
           'image_base64': 'mock_image_data',
         }),
-      );
+      ).timeout(const Duration(seconds: 5), onTimeout: () {
+        throw Exception('Connection timeout');
+      });
 
       if (response.statusCode == 200) {
         final result = jsonDecode(response.body);

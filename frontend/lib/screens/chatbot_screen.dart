@@ -95,14 +95,16 @@ class _ChatbotScreenState extends State<ChatbotScreen>
     await Future.delayed(const Duration(seconds: 1));
     
     try {
-      // Mock API call
+      // Mock API call - using try-catch to handle network errors gracefully
       final response = await http.post(
         Uri.parse('http://localhost:8000/chatbot/query'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'message': message,
         }),
-      );
+      ).timeout(const Duration(seconds: 5), onTimeout: () {
+        throw Exception('Connection timeout');
+      });
 
       if (response.statusCode == 200) {
         final result = jsonDecode(response.body);
@@ -111,17 +113,16 @@ class _ChatbotScreenState extends State<ChatbotScreen>
           _isTyping = false;
           _addBotMessage(
             result['response'],
-            suggestions: List<String>.from(result['suggestions']),
-            followUpQuestions: List<String>.from(result['follow_up_questions']),
+            suggestions: result['suggestions'] != null ? List<String>.from(result['suggestions']) : [],
+            followUpQuestions: result['follow_up_questions'] != null ? List<String>.from(result['follow_up_questions']) : [],
           );
         });
       } else {
         // If server returns an error
-        _showErrorSnackbar('Server error: ${response.statusCode}');
         _generateMockResponse(message);
       }
     } catch (e) {
-      // Generate mock data if API fails
+      // Generate mock data if API fails - no need to show error to user
       _generateMockResponse(message);
     }
   }
