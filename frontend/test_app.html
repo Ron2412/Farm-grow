@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroSmart Pro - App Status</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            margin-bottom: 30px;
+        }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+        .success { background: rgba(0, 255, 0, 0.2); }
+        .info { background: rgba(0, 150, 255, 0.2); }
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: white;
+            color: #764ba2;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            margin: 10px 5px;
+            transition: transform 0.3s;
+        }
+        .button:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌾 AgroSmart Pro - Flutter App Status</h1>
+        
+        <div class="status success">
+            <h2>✅ App Build Status</h2>
+            <p>Your Flutter app has been successfully built and is ready to run!</p>
+        </div>
+        
+        <div class="status info">
+            <h2>📱 Available Screens</h2>
+            <ul>
+                <li>Dashboard Screen - Main overview with weather, stats, and quick actions</li>
+                <li>Weather Screen - Professional weather forecast with crop recommendations</li>
+                <li>Soil Screen - Complete soil analysis with nutrient information</li>
+                <li>Market Screen - Market prices and trends</li>
+                <li>Alerts Screen - Important notifications for farmers</li>
+            </ul>
+        </div>
+        
+        <div class="status info">
+            <h2>🎨 UI Features Implemented</h2>
+            <ul>
+                <li>Modern, professional design with gradient themes</li>
+                <li>Smooth animations and transitions</li>
+                <li>Card-based layouts with shadows</li>
+                <li>Interactive components and filters</li>
+                <li>Responsive bottom navigation</li>
+                <li>Pull-to-refresh functionality</li>
+                <li>Loading and error states</li>
+            </ul>
+        </div>
+        
+        <div class="status">
+            <h2>🚀 How to Access Your App</h2>
+            <p>Choose one of the following methods to view your app:</p>
+            
+            <a href="build/web/index.html" class="button">Open Built App</a>
+            <a href="#" onclick="runCommand()" class="button">Run Development Server</a>
+        </div>
+        
+        <div class="status info">
+            <h2>📝 Development Commands</h2>
+            <pre style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px;">
+# Run in Chrome browser
+flutter run -d chrome
+
+# Build for production
+flutter build web
+
+# Run on different port
+flutter run -d chrome --web-port 3000
+
+# Hot reload while running
+Press 'r' in terminal
+            </pre>
+        </div>
+    </div>
+    
+    <script>
+        function runCommand() {
+            alert('To run the development server:\n\n1. Open Terminal\n2. Navigate to: /Users/ronakdas/Sih Agro/frontend\n3. Run: flutter run -d chrome\n\nThe app will open automatically in Chrome.');
+        }
+    </script>
+</body>
+</html>

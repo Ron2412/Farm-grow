@@ -1,5 +1,5 @@
 # ----------------------------
-# Python
+# Python Backend
 # ----------------------------
 __pycache__/
 *.py[cod]
@@ -26,57 +26,53 @@ env/
 ENV/
 *.sqlite3
 
-# ----------------------------
-# IDE / Editor files
-# ----------------------------
-.vscode/
-.idea/
-*.swp
-*.swo
-*.DS_Store
-
-# ----------------------------
 # Datasets & Models
-# ----------------------------
 backend/datasets/*.csv
 backend/datasets/*.xlsx
 backend/models/*.pkl
 backend/models/*.h5
 backend/models/*.joblib
 
-# ----------------------------
 # Environment & Secrets
-# ----------------------------
 .env
 *.key
 *.pem
 *.crt
 *.json
 
-# ----------------------------
-# Logs & Reports
-# ----------------------------
-*.log
-logs/
-coverage/
-htmlcov/
-*.coverage
-*.tox/
-.cache/
-pytest_cache/
-.pytest_cache/
 
 # ----------------------------
-# Build / Distribution
+# Flutter Frontend
 # ----------------------------
+# Flutter/Dart/Pub
+**/pubspec.lock
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Build outputs
 build/
-dist/
-.eggs/
-*.whl
-*.tar.gz
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/ephemeral/
+ios/ServiceDefinitions.json
+macos/Flutter/ephemeral/
+linux/flutter/ephemeral/
+windows/flutter/ephemeral/
 
-# ----------------------------
-# OS Files
-# ----------------------------
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS files
+*.swp
+*.swo
+*.DS_Store
 Thumbs.db
-.DS_Store
+
+# Web build
+web/.dart_tool/
+web/.firebase/
