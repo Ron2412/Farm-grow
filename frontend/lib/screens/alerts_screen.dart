@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
-import '../api/api_client.dart';
 
 class AlertsScreen extends StatefulWidget {
   const AlertsScreen({Key? key}) : super(key: key);
@@ -56,7 +55,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
       // Transform the data to a list of alerts
       final alerts = <Map<String, dynamic>>[];
       
-      if (alertsData != null) {
+      if (alertsData.isNotEmpty) {
         // Add weather alerts
         if (alertsData['weather_alerts'] != null) {
           for (var alert in alertsData['weather_alerts']) {

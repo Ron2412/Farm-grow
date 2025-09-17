@@ -716,43 +716,47 @@ class _SoilScreenState extends State<SoilScreen>
               ),
             ),
             const SizedBox(height: 16),
-            Row(
-              children: _seasons.map((season) {
-                final isSelected = season['id'] == _selectedSeason;
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _selectedSeason = season['id'] as String;
-                    });
-                    _fetchSoilData();
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.only(right: 8),
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: isSelected 
-                          ? AppTheme.primaryGreen 
-                          : Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      children: [
-                        Text(season['icon'] as String),
-                        const SizedBox(width: 4),
-                        Text(
-                          season['name'] as String,
-                          style: TextStyle(
-                            color: isSelected ? Colors.white : Colors.black,
-                            fontWeight: isSelected 
-                                ? FontWeight.bold 
-                                : FontWeight.normal,
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: _seasons.map((season) {
+                  final isSelected = season['id'] == _selectedSeason;
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedSeason = season['id'] as String;
+                      });
+                      _fetchSoilData();
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(right: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isSelected 
+                            ? AppTheme.primaryGreen 
+                            : Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(season['icon'] as String),
+                          const SizedBox(width: 4),
+                          Text(
+                            season['name'] as String,
+                            style: TextStyle(
+                              color: isSelected ? Colors.white : Colors.black,
+                              fontWeight: isSelected 
+                                  ? FontWeight.bold 
+                                  : FontWeight.normal,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              }).toList(),
+                  );
+                }).toList(),
+              ),
             ),
             const SizedBox(height: 20),
             ...crops.map<Widget>((crop) {
@@ -809,14 +813,15 @@ class _SoilScreenState extends State<SoilScreen>
                             ),
                           ),
                           const SizedBox(height: 8),
-                          Row(
+                          Wrap(
+                            spacing: 16,
+                            runSpacing: 8,
                             children: [
                               _buildCropInfoItem(
                                 'Yield',
                                 crop['yield'] as String,
                                 Icons.grass,
                               ),
-                              const SizedBox(width: 16),
                               _buildCropInfoItem(
                                 'Profit',
                                 crop['profit'] as String,
@@ -838,29 +843,28 @@ class _SoilScreenState extends State<SoilScreen>
   }
 
   Widget _buildCropInfoItem(String label, String value, IconData icon) {
-    return Row(
-      children: [
-        Icon(
-          icon,
-          size: 14,
-          color: Colors.grey,
-        ),
-        const SizedBox(width: 4),
-        Text(
-          '$label: ',
-          style: const TextStyle(
-            fontSize: 12,
+    return Flexible(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            size: 14,
             color: Colors.grey,
           ),
-        ),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
+          const SizedBox(width: 4),
+          Flexible(
+            child: Text(
+              '$label: $value',
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

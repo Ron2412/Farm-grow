@@ -15,7 +15,6 @@ class _PestDetectionScreenState extends State<PestDetectionScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
-  late Animation<double> _scaleAnimation;
   late Animation<Offset> _slideAnimation;
 
   bool _isLoading = false;
@@ -43,13 +42,6 @@ class _PestDetectionScreenState extends State<PestDetectionScreen>
     );
 
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: const Interval(0.0, 0.8, curve: Curves.easeOut),
-      ),
-    );
-
-    _scaleAnimation = Tween<double>(begin: 0.9, end: 1.0).animate(
       CurvedAnimation(
         parent: _animationController,
         curve: const Interval(0.0, 0.8, curve: Curves.easeOut),
@@ -465,11 +457,14 @@ class _PestDetectionScreenState extends State<PestDetectionScreen>
                 children: [
                   Icon(Icons.bug_report, color: AppTheme.danger),
                   const SizedBox(width: 8),
-                  Text(
-                    'Detection Result',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.danger,
+                  Expanded(
+                    child: Text(
+                      'Detection Result',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.danger,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
@@ -484,10 +479,14 @@ class _PestDetectionScreenState extends State<PestDetectionScreen>
                     'Identified Pest:',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
-                  Text(
-                    pestName,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Text(
+                      pestName,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.end,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],

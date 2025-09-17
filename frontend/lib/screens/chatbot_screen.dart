@@ -4,6 +4,20 @@ import 'dart:math';
 import 'package:http/http.dart' as http;
 import '../theme/app_theme.dart';
 
+class ChatMessage {
+  final String text;
+  final bool isUser;
+  final List<String>? suggestions;
+  final List<String>? followUpQuestions;
+  
+  ChatMessage({
+    required this.text,
+    required this.isUser,
+    this.suggestions,
+    this.followUpQuestions,
+  });
+}
+
 class ChatbotScreen extends StatefulWidget {
   const ChatbotScreen({Key? key}) : super(key: key);
 
@@ -560,7 +574,12 @@ class _ChatbotScreenState extends State<ChatbotScreen>
           children: [
             Icon(Icons.info_outline, color: AppTheme.primaryGreen),
             const SizedBox(width: 8),
-            const Text('About AgroSmart Assistant'),
+            Expanded(
+              child: Text(
+                'About AgroSmart Assistant',
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
         content: Column(
@@ -612,18 +631,4 @@ class _ChatbotScreenState extends State<ChatbotScreen>
       ),
     );
   }
-}
-
-class ChatMessage {
-  final String text;
-  final bool isUser;
-  final List<String>? suggestions;
-  final List<String>? followUpQuestions;
-
-  ChatMessage({
-    required this.text,
-    required this.isUser,
-    this.suggestions,
-    this.followUpQuestions,
-  });
 }

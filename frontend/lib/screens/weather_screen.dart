@@ -290,34 +290,42 @@ class _WeatherScreenState extends State<WeatherScreen>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(Icons.location_on, 
-                              color: Colors.white70, size: 16),
-                            const SizedBox(width: 4),
-                            Text(
-                              city,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(Icons.location_on, 
+                                color: Colors.white70, size: 16),
+                              const SizedBox(width: 4),
+                              Flexible(
+                                child: Text(
+                                  city,
+                                  style: const TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 16,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              '${temp.round()}°',
                               style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 16,
+                                color: Colors.white,
+                                fontSize: 64,
+                                fontWeight: FontWeight.w200,
+                                height: 1,
                               ),
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          '${temp.round()}°',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 64,
-                            fontWeight: FontWeight.w200,
-                            height: 1,
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     Column(
                       children: [
@@ -334,21 +342,28 @@ class _WeatherScreenState extends State<WeatherScreen>
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
                           ),
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
                   ],
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _buildTempDetail('Feels like', 
-                      '${(_currentWeather!['feels_like'] ?? temp).round()}°'),
-                    const SizedBox(width: 24),
-                    _buildTempDetail('UV Index', 
-                      '${_currentWeather!['uv_index'] ?? 5}'),
-                    const SizedBox(width: 24),
-                    _buildTempDetail('Visibility', 
-                      '${(_currentWeather!['visibility'] ?? 10)} km'),
+                    Expanded(
+                      child: _buildTempDetail('Feels like', 
+                        '${(_currentWeather!['feels_like'] ?? temp).round()}°'),
+                    ),
+                    Expanded(
+                      child: _buildTempDetail('UV Index', 
+                        '${_currentWeather!['uv_index'] ?? 5}'),
+                    ),
+                    Expanded(
+                      child: _buildTempDetail('Visibility', 
+                        '${(_currentWeather!['visibility'] ?? 10)} km'),
+                    ),
                   ],
                 ),
               ],
@@ -369,6 +384,7 @@ class _WeatherScreenState extends State<WeatherScreen>
             color: Colors.white.withOpacity(0.7),
             fontSize: 12,
           ),
+          overflow: TextOverflow.ellipsis,
         ),
         Text(
           value,
@@ -377,6 +393,7 @@ class _WeatherScreenState extends State<WeatherScreen>
             fontSize: 16,
             fontWeight: FontWeight.w600,
           ),
+          overflow: TextOverflow.ellipsis,
         ),
       ],
     );
